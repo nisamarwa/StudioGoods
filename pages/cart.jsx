@@ -88,7 +88,7 @@ export default function CartPage({ removeFromCart }) {
       mode:'cors'
     }
     console.log('config', config.body);
-    fetch('http://localhost:3000/create-checkout-session', config).then(res => {
+    fetch('https://studiogoods-server.onrender.com/create-checkout-session', config).then(res => {
       if(res.status === 204) return null 
       if(res.ok) return res.json()
       else console.log('res', res)
