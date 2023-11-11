@@ -1,0 +1,57 @@
+.header {
+    height: rem(56px);
+    background-color: transparent;
+    /* border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4)); */
+    position: relative;
+    margin-top: rem(10px);
+}
+  
+  .inner {
+    height: rem(56px);
+    display: block;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .dropdown {
+    position: absolute;
+    top:rem(60px);
+    left: 0;
+    right: 0;
+    background-color: rgba(230, 204, 178, 0.90); 
+    opacity: 0.90;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-top-width: 0;
+    overflow: hidden;
+    border-radius: 0;
+  }
+  
+  .link {
+    display: block;
+    line-height: 1;
+    padding: rem(8px) rem(12px);
+    border-radius: var(--mantine-radius-sm);
+    text-decoration: none;
+    color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+    font-size: 13px ;
+    font-weight: 500;
+  
+    @mixin hover {
+      background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+    }
+  
+    [data-mantine-color-scheme] &[data-active] {
+        background-color: transparent;
+      /* color: var(--mantine-color-white); */
+    }
+
+    &[data-active] {
+      border-bottom: 1.5px solid var(--mantine-color-gray-7); /* Sesuaikan dengan warna yang Anda inginkan */
+      color: rgba(212, 163, 115, 1); /* Sesuaikan dengan warna yang Anda inginkan */
+  }
+
+    @media (max-width: $mantine-breakpoint-sm) {
+      font-size: 10px;
+    }
+  }

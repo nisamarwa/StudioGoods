@@ -1,0 +1,21 @@
+.paper {
+    width:100%;
+    height: 100%;
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        width: 100%;
+        height: 70%;
+    }
+}
+
+.closeButton {
+    margin-left: 40%;
+
+    @media (max-width: $mantine-breakpoint-sm) {
+        margin-left: rem(10px);
+    }
+
+    @media (max-width: $mantine-breakpoint-xl) {
+        margin-left: 10%;
+    }
+}

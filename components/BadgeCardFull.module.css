@@ -1,0 +1,97 @@
+.card {
+    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+    /* margin: 10px 200px; */
+    width: 70%;
+    @media (max-width: $mantine-breakpoint-sm) {
+      width: 70%;
+      margin: auto 30px;
+    }
+  
+    /* @media (max-width: $mantine-breakpoint-md) {
+      width: 40%;
+      margin-left: rem(40px);
+      margin-top: rem(30px);
+    } */
+  }
+  
+  .section {
+    border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+    padding-left: var(--mantine-spacing-md);
+    padding-right: var(--mantine-spacing-md);
+    padding-bottom: var(--mantine-spacing-md);
+  }
+  
+  .like {
+    color: var(--mantine-color-black-6);
+    width: rem(20px);
+    height: rem(20px);
+  }
+  
+  .cardContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 300px));
+    gap: 10px;
+    grid-row-gap:50px;
+    margin-top: 30px;
+    margin-left: 300px;
+    overflow-x: auto; /* Add horizontal scroll if needed */
+  
+    @media (max-width: $mantine-breakpoint-sm) {
+      margin-left: 0;
+      /* flex-wrap: wrap; */
+    }
+  
+    @media (max-width: $mantine-breakpoint-md) {
+      margin-left: 0;
+      /* flex-wrap: wrap; */
+    }
+  }
+  
+  
+  .label {
+    text-transform: uppercase;
+    font-size: var(--mantine-font-size-xs);
+    font-weight: 700;
+  }
+  
+  /* Tambahkan ini ke dalam file BadgeCard.module.css Anda */
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Warna latar belakang overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Mulai dengan opacity 0 (tidak terlihat) */
+    transition: opacity 0.2s ease-in-out; /* Efek transisi saat hover */
+  }
+  
+  
+  
+  /* Tambahkan styling overlay saat hover */
+  .card:hover .overlay {
+    opacity: 1; /* Tampilkan overlay saat hover */
+  }
+  
+  .imageContainer {
+    position: relative;
+    overflow: hidden; /* Mengatur overflow untuk gambar yang lebih besar */
+  }
+  
+  .imageContainer img {
+    width: 100%; /* Gambar akan mengisi lebar kontainer */
+    height: 380px; /* Tinggi gambar akan disesuaikan secara proporsional */
+    display: block; /* Menghilangkan margin tambahan yang mungkin ada pada gambar */
+  }
+  
+  .overlayButton {
+    color: white; /* Warna ikon tombol */
+    background: transparent; /* Hapus latar belakang tombol */
+    border: none; /* Hapus border tombol */
+    margin: 0 5px; /* Jarak antara tombol */
+    cursor: pointer; /* Ubah kursor saat hover ke tombol */
+  }
+  
