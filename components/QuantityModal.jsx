@@ -7,16 +7,21 @@ import {
   Paper,
   NumberInput,
   Space,
+  Container,
   Group, 
+  Notification,
   Image,
-  Button
+  Button,
 } from '@mantine/core';
-import { GoogleButton } from './GoogleButton';
 import classes from './AuthenticationPage.module.css'
-
+import useFirebaseAuth from '@/lib/Authentication';
 
 export function QuantityModal({ setModalOpen, data }) {
   const [cartItems, setCartItems] = useState([]);
+  const [cart, setCart] = useState(false);
+  const [message, setMessage] = useState('');
+  const {user, updateDocCart} = useFirebaseAuth();
+
   const form = useForm({
     initialValues: {
       quantity: 1,
@@ -27,48 +32,77 @@ export function QuantityModal({ setModalOpen, data }) {
     }
   });
   
-  const addToCart = (item) => {
-    const existingItem = cartItems.find((cartItem) => cartItem.id === data.id);
-  
-    if (existingItem) {
-      const updatedCartItems = cartItems.map((cartItem) => {
-        if (cartItem.id === data.id) {
-          console.log("quan", cartItem.quantity, item.quantity, cartItem.quantity + item.quantity)
-          return { 
-            id:cartItem.id,
-            quantity: cartItem.quantity + item.quantity
-          };
-        }
-        return cartItem;
-      });
-      console.log("cart", updatedCartItems, cartItems)
-      setCartItems(updatedCartItems);
-      localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-    } else {
-      console.log("First CArt")
-      const cartObj = {
-        id: data.id,
-        quantity: item.quantity,
-      };
-      const updatedCartItems = [...cartItems, cartObj];
-      setCartItems(updatedCartItems);
-      localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-    }
+  const addToCart = async(item) => {
+    try{
+      console.log('cartItems',cartItems);
+      const existingItem = cartItems.find((cartItem) => cartItem.id === data.id);
+      let updatedCartItems;
 
-    setModalOpen(false);
+      if (existingItem) {
+        updatedCartItems = cartItems.map((cartItem) => {
+          if (cartItem.id === data.id) {
+            return { 
+              id:cartItem.id,
+              quantity: cartItem.quantity + item.quantity
+            };
+          }
+          return cartItem;
+        });
+        console.log('update exist', updatedCartItems)
+      }
+      else {
+        const cartObj = {
+          id: data.id,
+          quantity: item.quantity,
+        };
+        updatedCartItems = [...cartItems, cartObj];
+        console.log('update first', updatedCartItems)
+      }
+
+      const dataToStore = {
+        uid:user.uid,
+        cart:updatedCartItems
+      }
+
+      setCartItems(updatedCartItems);
+      localStorage.setItem('cart', JSON.stringify(dataToStore))
+      // console.log('update 2', updatedCartItems)
+      await updateDocCart({cart:updatedCartItems}); 
+
+      setCart(true)
+      console.log('data store', dataToStore)
+      setMessage('Item added to cart successfully!')
+    }
+    catch(error){
+      setCart(true);
+      setMessage('Failed to add item to cart', error)
+    }
+    finally{
+      setTimeout(() =>{
+        setModalOpen(false);
+      }, 5000)
+    }
+    
   }
   
 
   function getCartFromLocalStorage() {
     const cartData = localStorage.getItem('cart');
-  
+    console.log("getlocal")
+    let parseData = JSON.parse(cartData);
+
     if (cartData) {
-        let parseData = JSON.parse(cartData);
-        if (!Array.isArray(parseData)) {
-          parseData = [parseData];
-        }
-        console.log("CART DATA", cartData, parseData)
-        setCartItems(parseData);
+      // Pastikan parseData adalah array
+      if (Array.isArray(parseData)) {
+        console.log('cartnya array');// Ambil bagian cart dari setiap objek jika properti cart ada
+        const cart = parseData.map(item => item.cart || []);
+        
+        console.log("CART DATA", parseData);
+        setCartItems(cart);
+      }
+      else {
+        setCartItems(parseData.cart);
+      }
     }
   }
 
@@ -77,6 +111,16 @@ export function QuantityModal({ setModalOpen, data }) {
   },[])
 
   return (
+    <>
+     {cart &&(
+      <>
+        <Notification title="We notify you that">
+          {message}
+        </Notification>
+        <Space h={20}/>
+      </>
+      )}
+    <Container>
     <Paper radius="md" p="xl" withBorder size='md' className={classes.paper}>
       <Text size="lg" fw={500}>
         {data.title}
@@ -109,5 +153,7 @@ export function QuantityModal({ setModalOpen, data }) {
       </Button>
       </form>
     </Paper>
+    </Container>
+    </>
   );
 }

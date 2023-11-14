@@ -32,13 +32,7 @@ export default function BadgeCard() {
     title: product.name,
     categories: product.categories,
     price: formatUSD(product.price),
-    badges: [
-          { emoji: '☀️', label: 'Sunny weather' },
-          { emoji: '🦓', label: 'Onsite zoo' },
-          { emoji: '🌊', label: 'Sea' },
-          { emoji: '🌲', label: 'Nature' },
-          { emoji: '🤽', label: 'Water sports' },
-        ],
+    id: product.id
   }));
 
   const isServer = typeof window === 'undefined';
@@ -69,12 +63,6 @@ export default function BadgeCard() {
     ):(
     <div className={classes.cardContainer}>
       {limitedMockdata.map((data, index) => {
-        const features = data.badges.map((badge) => (
-          <Badge variant="light" key={badge.label} leftSection={badge.emoji}>
-            {badge.label}
-          </Badge>
-        ));
-
         return (
           <Card
             withBorder

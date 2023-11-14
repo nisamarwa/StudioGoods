@@ -1,6 +1,6 @@
 import { signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { auth, db, storage } from "./firebase";
-import { doc, setDoc, collection, getDocs } from "firebase/firestore/lite";
+import { doc, setDoc, collection, getDocs, updateDoc } from "firebase/firestore/lite";
 import { useEffect, useRef, useState } from "react";
 import { em } from "@mantine/core";
 
@@ -48,48 +48,66 @@ export default function useFirebaseAuth(){
     }
 
     const signInWithEmail = async(values) => {
-        console.log("ISINYA", values)
-        const email = values.email;
-        const password = values.password;
-        await signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-            const user = userCredential.user;
-            console.log("USER", user)
-        }).catch((error)=>{
-            console.log("ERROR SIGNIN", error)
-        })
+        try{
+            const email = values.email;
+            const password = values.password;
+            await signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
+                const user = userCredential.user;
+                console.log("USER", user)
+            }).catch((error)=>{
+                console.log("ERROR SIGNIN", error)
+                throw error;
+            })
+        }catch(error){
+            throw error;
+        }
     }
 
     const createUserWithEmail = async(values)=>{
-        console.log("values", values);
-        const name = values.name;
-        const email = values.email;
-        const password = values.password;
-        await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
-            const user = userCredential.user;
-            console.log("USER", userCredential)
-            AddUserData(user.uid, name, user.email, null)
-        }).catch((error) =>{
-            console.log("ERROR", error)
-        })
+        try{
+            const name = values.name;
+            const email = values.email;
+            const password = values.password;
+            await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+                const user = userCredential.user;
+                console.log("USER", userCredential)
+                AddUserData(user.uid, name, user.email, null)
+            }).catch((error) =>{
+                console.log('error register', error.message)
+                throw error;
+            })
+        }catch(error){
+            throw error;
+        }
     }
 
     const SendPasswordResetEmail = async(values) => {
-        const email = values.email;
-        await sendPasswordResetEmail(auth, email).then(()=>{
-            console.log("Email has been sent!")
-        }).catch((error)=>{
-            console.log("ERROR Send email ", error.message)
-        })
+        try{
+            const email = values.email;
+            await sendPasswordResetEmail(auth, email).then(()=>{
+                console.log("Email has been sent!")
+            }).catch((error)=>{
+                console.log("ERROR Send email ", error.message)
+                throw error;
+            })
+        }catch(error){
+            throw error;
+        }
     } 
 
-    const signOut = () =>
-        auth.signOut(auth).then(() => {
-        console.log("sign out");
-        setUser(null);
-        
-        }).catch((error) => {
-        console.log(error);
-    });
+    const signOut = () =>{
+        try{
+            auth.signOut(auth).then(() => {
+                console.log("sign out");
+                setUser(null);
+                localStorage.clear();
+            }).catch((error) => {
+                throw error
+            });
+        }catch(error){
+            throw error;
+        }
+    }
 
     const AddUserData = async(uid, displayName, email, urlPhoto ) => {
         await setDoc(doc(db, "UserData", uid), {
@@ -121,6 +139,12 @@ export default function useFirebaseAuth(){
         // return productsData;
     };
 
+    const updateDocCart = async (updateData) =>{
+        const data = doc(db, "UserData", user.uid);
+        // Set the "capital" field of the city 'DC'
+        await updateDoc(data, updateData);
+    }
+
     useEffect(() => {
         fetchInitialProducts();
         const unsubscribe = auth.onAuthStateChanged(authStateChanged);
@@ -137,6 +161,7 @@ export default function useFirebaseAuth(){
         createUserWithEmail, 
         signInWithEmail,
         SendPasswordResetEmail,
-        fetchInitialProducts
+        fetchInitialProducts,
+        updateDocCart
     }
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import { Container, Group, Burger, Paper, Transition, Text, Button, Divider, Portal, Menu, ActionIcon, Avatar, Modal } from '@mantine/core';
+import { Notification, Container, Group, Burger, Paper, Transition, Text, Button, Divider, Space, Menu, ActionIcon, Avatar, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { AuthenticationForm } from './AuthenticationPage';
 import classes from './MainHeader.module.css';
@@ -21,6 +21,8 @@ export function MainHeader() {
   const [isModalOpen, setModalOpen] = useState(false)
   const { user, signOut, isAuthenticated } = useFirebaseAuth();
   const router = useRouter();
+  const [showNotif, setShowNotif] = useState(false);
+  const [message, setMessage] = useState('');
 
   const items = links.map((link) => (
     <a
@@ -50,6 +52,17 @@ export function MainHeader() {
     else openLoginModal();
   }
 
+  const handleSignOut = async () => {
+    try{
+      await signOut().then(()=>{
+        console.log("Check your email!");
+      })
+    }catch(error){
+      setShowNotif(true);
+      setMessage(error.message);
+    }
+  };
+
   useEffect(() => {
     console.log("USER", user, isAuthenticated)
     if(user){
@@ -61,6 +74,14 @@ export function MainHeader() {
 
   return (
     <header className={classes.header}>
+      {showNotif &&(
+      <>
+        <Notification onClose={setShowNotif(false)} title="We notify you that">
+          {message}
+        </Notification>
+        <Space h={20}/>
+      </>
+      )}
         <Container size="md" className={classes.inner}>
             <Group justify="space-between">
                 <Text fw={700} className={classes.name}>StudioGoods</Text>

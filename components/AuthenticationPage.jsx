@@ -6,21 +6,25 @@ import {
   Text,
   Paper,
   Group,
-  PaperProps,
+  Space,
   Button,
   Divider,
   Checkbox,
   Anchor,
   Stack,
-  ActionIcon,
+  Notification,
 } from '@mantine/core';
 import { GoogleButton } from './GoogleButton';
 import classes from './AuthenticationPage.module.css'
 import useFirebaseAuth from '@/lib/Authentication';
+import { useState } from 'react';
 
 export function AuthenticationForm({ setModalOpen }) {
   const [type, toggle] = useToggle(['login', 'register', 'forgotPassword']);
   const {createUserWithEmail, signInWithEmail, SendPasswordResetEmail} = useFirebaseAuth();
+  const [showNotif, setShowNotif] = useState(false);
+  const [message, setMessage] = useState('');
+
   const form = useForm({
     initialValues: {
       email: '',
@@ -37,25 +41,39 @@ export function AuthenticationForm({ setModalOpen }) {
   });
   
   const handleRegister = async(values) =>{
-    await createUserWithEmail(values).then(()=>{
-      console.log("SUKSES ga", );
-      setModalOpen(false);
-    });
+    try{
+      await createUserWithEmail(values).then(()=>{
+        console.log("SUKSES ga", );
+        setModalOpen(false);
+      });
+    }catch(error){
+      console.log('error register page')
+      setShowNotif(true);
+      setMessage(error.message);
+    }
   }
 
   const handleLogin = async(values) => {
-    console.log("KESIni", values)
-    await signInWithEmail(values).then(()=>{
-      console.log("LOGIN SUCESS");
-      setModalOpen(false);
-    })
+    try{
+      await signInWithEmail(values).then(()=>{
+        console.log("LOGIN SUCESS");
+        setModalOpen(false);
+      })
+    }catch(error){
+      setShowNotif(true);
+      setMessage(error.message)
+    }
   }
 
   const handleForgetPassword = async (values) => {
-    console.log("FORGET PASSWORD", values);
-    await SendPasswordResetEmail(values).then(()=>{
-      console.log("Check your email!");
-    })
+    try{
+      await SendPasswordResetEmail(values).then(()=>{
+        console.log("Check your email!");
+      })
+    }catch(error){
+      setShowNotif(true);
+      setMessage(error.message);
+    }
   };
 
 
@@ -76,6 +94,15 @@ export function AuthenticationForm({ setModalOpen }) {
   }
 
   return (
+    <>
+    {showNotif &&(
+      <>
+        <Notification onClose={()=>setShowNotif(false)} title="We notify you that">
+          {message}
+        </Notification>
+        <Space h={20}/>
+      </>
+      )}
     <Paper radius="md" p="xl" withBorder size='xl' className={classes.paper}>
       <Text size="lg" fw={500}>
       Welcome to StudioGoods, {type === 'forgotPassword' ? 'Reset Password' : upperFirst(type)} with
@@ -170,5 +197,6 @@ export function AuthenticationForm({ setModalOpen }) {
         </Group>
         </form>  
     </Paper>
+    </>
   );
 }

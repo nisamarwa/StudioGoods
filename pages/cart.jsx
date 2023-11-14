@@ -10,21 +10,22 @@ import classes from './Cart.module.css'
 export default function CartPage({ removeFromCart }) {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const {products} = useFirebaseAuth();
+  const {products, updateDocCart} = useFirebaseAuth();
   const [checkedItems, setCheckedItems] = useState({});
   const [showPaper, setShowPaper] = useState(false);
   const router = useRouter();
+  const {user} = useFirebaseAuth();
   const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
 
   async function getCartFromLocalStorage() {
     const cartData = localStorage.getItem('cart');
   
     if (cartData) {
-        console.log("CART DATA", cartData, products)
         let parseData = JSON.parse(cartData);
-        if (!Array.isArray(parseData)) {
-          parseData = [parseData];
-        }
+        console.log("parse", parseData)
+        // if (!Array.isArray(parseData)) {
+        //   parseData = [parseData];
+        // }
 
         await new Promise((resolve) => {
           const checkSavedProduct = () => {
@@ -39,18 +40,22 @@ export default function CartPage({ removeFromCart }) {
           checkSavedProduct();
         });
 
-        const cartItemsWithDetails = parseData.map((cartItemId) =>{
-         const productCart =  products.find((product) => product.id === cartItemId.id);
-         return{
-          ...productCart,
-          quantity:cartItemId.quantity,
-         }
-        });
-        console.log("COCOK", cartItemsWithDetails, cartItems.length)
+        const userUID = user.uid; 
+        // const cartArray = parseData.cart;
         
-
-        setCartItems(cartItemsWithDetails);
+        if(parseData.uid===userUID){
+          console.log('usercartirems', parseData.cart)
+          const cartItemsWithDetails = parseData.cart.map((cartItemId) =>{
+          const productCart =  products.find((product) => product.id === cartItemId.id);
+            return{
+              ...productCart,
+              quantity:cartItemId.quantity,
+            }
+          });
+          console.log("COCOK", cartItemsWithDetails)
+          setCartItems(cartItemsWithDetails);
         setIsLoading(false);
+        }
     }
   }
 
@@ -98,7 +103,7 @@ export default function CartPage({ removeFromCart }) {
     })
   };
 
-  const handleRemoveFromCart = (item) => {
+  const handleRemoveFromCart = async(item) => {
     // Salin state keranjang ke dalam variabel baru
     const updatedCartItems = [...cartItems];
   
@@ -114,7 +119,7 @@ export default function CartPage({ removeFromCart }) {
   
       // Simpan ulang keranjang ke local storage
       localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-  
+      await updateDocCart({ cart: updatedCartItems });
       // Lakukan apa yang Anda inginkan dengan informasi item yang dihapus
       console.log('Item removed:', item);
     }
@@ -175,13 +180,13 @@ export default function CartPage({ removeFromCart }) {
   }
 
   useEffect(() => {
-    getCartFromLocalStorage();
+    if(user) getCartFromLocalStorage();
     if (Object.values(checkedItems).some((item) => item === true)) {
       setShowPaper(true);
     } else {
       setShowPaper(false);
     }
-  }, [products, checkedItems]);
+  }, [products, checkedItems, user]);
   
 
   return (

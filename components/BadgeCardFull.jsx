@@ -1,9 +1,8 @@
 'use client'
 
 import React, { useEffect, useState, } from 'react'; // Import useState
-import { IconHeart, IconShoppingCart, IconShare } from '@tabler/icons-react'; // Import icons
-import { useDisclosure } from '@mantine/hooks';
-import { Card, Image, Modal, Text, Group, Badge, Button, ActionIcon } from '@mantine/core';
+import { IconHeart, IconShoppingCart, IconShare, IconX, IconCheck } from '@tabler/icons-react'; // Import icons
+import { rem, Card, Image, Modal, Text, Group, Notification, Badge, Button, ActionIcon } from '@mantine/core';
 import classes from './BadgeCardFull.module.css';
 import useFirebaseAuth from '@/lib/Authentication';
 import { QuantityModal } from './QuantityModal';
@@ -18,6 +17,8 @@ export default function BadgeCardFull({selectedCategory}) {
   const [isModalOpen, setModalOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  const xIcon = <IconX style={{ width: rem(20), height: rem(20) }} />;
+  const checkIcon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
 
   function formatUSD(price) {
     // Menggunakan metode toLocaleString() untuk mengubah ke format Rupiah
@@ -67,6 +68,7 @@ export default function BadgeCardFull({selectedCategory}) {
   
   return (
     <>
+
     <div className={classes.cardContainer}>
       {mockdata.map((data, index) => {
 
@@ -127,7 +129,7 @@ export default function BadgeCardFull({selectedCategory}) {
               </Button>
             </Group>
 
-            <Modal opened={isModalOpen} style={{opacity:0.35}} onClose={()=>setModalOpen(false)}>
+            <Modal opened={isModalOpen} onClose={()=>setModalOpen(false)}>
                 <QuantityModal setModalOpen={setModalOpen} data={selectedProduct}/>
             </Modal>
 
