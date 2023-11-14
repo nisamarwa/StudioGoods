@@ -44,9 +44,7 @@ export default function HeroContentLeft() {
         <Title>WELCOME TO STUDIOGOODS !!</Title>
         <Space h={20}/>
         <Text>
-            Thank you for visiting our test portfolio. This is a demonstration of my work.
-            Some features are still under construction, including details, like, and share functionality,
-            as well as the profile page.
+        Thank you for exploring our test portfolio. This showcase demonstrates our ongoing work, and we appreciate your interest. While some features are still under construction, including details, like, and share functionality, we are pleased to inform you that the core functions of our e-commerce platform are up and running smoothly. Feel free to navigate through the available features and products. Your feedback is valuable as we continue to enhance and refine the user experience.
         </Text>
         <Space h={100}/>
       </Modal>
