@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react';
-import { Overlay, Container, Title, Button, Text, Space } from '@mantine/core';
+import { Overlay, Container, Title, Modal, Text, Space } from '@mantine/core';
 import classes from './HeroContentLeft.module.css';
 import BadgeCard from '../components/BadgeCard';
 import { MainHeader } from '@/components/MainHeader';
 import GetInTouch from '@/pages/contact';
 
 export default function HeroContentLeft() {
+  const[showModal, setShowModal] = useState(true);
+
    return (
     <>
     <div className={classes.hero}>
@@ -27,7 +29,7 @@ export default function HeroContentLeft() {
         </Text>
       </Container>
     </div>
-    {/* <HeaderProduct onCategoryChange={handleCategoryChange}/> */}
+
     <Text size='xl' ta='center' fw={400} style={{marginTop:'50px'}}>P R O D U C T S</Text>
     <BadgeCard/>
     <Space h={50}/>
@@ -35,6 +37,20 @@ export default function HeroContentLeft() {
     <div id="contact-section">
       <GetInTouch/>
     </div>
+
+    {/* {showModal &&( */}
+      <Modal opened={showModal} size='lg' onClose={()=>setShowModal(false)}>
+        <Space h={50}/>
+        <Title>WELCOME TO STUDIOGOODS !!</Title>
+        <Space h={20}/>
+        <Text>
+            Thank you for visiting our test portfolio. This is a demonstration of my work.
+            Some features are still under construction, including details, like, and share functionality,
+            as well as the profile page.
+        </Text>
+        <Space h={100}/>
+      </Modal>
+    {/* )} */}
     </>
   );
 }
